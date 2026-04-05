@@ -29,4 +29,25 @@ public class CarServiceImpl implements CarService {
         return carRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
     }
+    @Override
+    public CarDetails updateCar(Long id, CarDetails car) {
+        CarDetails existingCar = getCarById(id);
+
+        existingCar.setCarModel(car.getCarModel());
+        existingCar.setBrand(car.getBrand());
+        existingCar.setPlateNumber(car.getPlateNumber());
+        existingCar.setFuelType(car.getFuelType());
+        existingCar.setTransmission(car.getTransmission());
+        existingCar.setCategory(car.getCategory());
+        existingCar.setSeatingCapacity(car.getSeatingCapacity());
+        existingCar.setDailyRate(car.getDailyRate());
+        existingCar.setStatus(car.getStatus());
+        existingCar.setYear(car.getYear());
+        existingCar.setDescription(car.getDescription());
+        existingCar.setImageUrl(car.getImageUrl());
+        existingCar.setCurrentLat(car.getCurrentLat());
+        existingCar.setCurrentLng(car.getCurrentLng());
+
+        return carRepository.save(existingCar);
+    }
 }

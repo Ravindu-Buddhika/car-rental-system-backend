@@ -28,4 +28,8 @@ public class CarController {
     public ResponseEntity<CarDetails> getCarById(@PathVariable Long id) {
         return ResponseEntity.ok(carService.getCarById(id));
     }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<CarDetails> updateCar(@PathVariable Long id, @RequestBody CarDetails car) {
+        return ResponseEntity.ok(carService.updateCar(id, car));
+    }
 }
