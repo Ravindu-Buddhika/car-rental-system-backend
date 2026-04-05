@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.model.dto.AdminDTO;
 import org.example.service.AdminService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,5 +29,11 @@ public class AdminController {
     @GetMapping("/search/email/{email}")
     public ResponseEntity<AdminDTO> getByEmail(@PathVariable String email) {
         return ResponseEntity.ok(adminService.getAdminByEmail(email));
+    }
+    @PutMapping("/profile")
+    public ResponseEntity<String> updateProfile(Authentication authentication, @RequestBody AdminDTO dto) {
+        String email = authentication.getName();
+        adminService.updateAdminByEmail(email, dto);
+        return ResponseEntity.ok("Admin profile updated successfully!");
     }
 }

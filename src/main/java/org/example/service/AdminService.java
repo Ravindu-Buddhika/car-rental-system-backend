@@ -8,4 +8,5 @@ public interface AdminService {
     public void registerAdmin(AdminDTO adminDTO);
     List<AdminDTO> getAllAdmins();
     AdminDTO getAdminByEmail(String email);
+    void updateAdminByEmail(String email, AdminDTO adminDTO);
 }

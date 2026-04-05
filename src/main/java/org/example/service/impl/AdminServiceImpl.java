@@ -54,4 +54,20 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
         return modelMapper.map(admin, AdminDTO.class);
     }
+    @Override
+    public void updateAdminByEmail(String email, AdminDTO adminDTO) {
+        Admin existingAdmin = adminRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        existingAdmin.setUserName(adminDTO.getUserName());
+
+        existingAdmin.setEmail(adminDTO.getEmail());
+        User user = existingAdmin.getUser();
+        if (user != null) {
+            user.setEmail(adminDTO.getEmail());
+            userRepository.save(user);
+        }
+
+        adminRepository.save(existingAdmin);
+    }
 }
