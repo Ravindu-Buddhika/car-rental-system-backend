@@ -78,4 +78,9 @@ public class CarServiceImpl implements CarService {
     public List<CarDetails> getCarsByCategory(String category) {
         return carRepository.findByCategory(category);
     }
+
+    @Override
+    public List<CarDetails> getCarsByTransmission(String transmission) {
+        return carRepository.findByTransmission(transmission);
+    }
 }

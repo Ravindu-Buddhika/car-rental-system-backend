@@ -51,6 +51,10 @@ public class CarController {
     }
     @GetMapping("/search/model")
     public ResponseEntity<List<CarDetails>> searchByCategory(@RequestParam String category) {
-        return ResponseEntity.ok(carService.searchByModel(category));
+        return ResponseEntity.ok(carService.getCarsByCategory(category));
+    }
+    @GetMapping("/filter/transmission")
+    public ResponseEntity<List<CarDetails>> getByTransmission(@RequestParam String transmission) {
+        return ResponseEntity.ok(carService.getCarsByTransmission(transmission));
     }
 }
