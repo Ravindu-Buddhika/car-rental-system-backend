@@ -12,4 +12,5 @@ public interface CarService {
     void deleteCar(Long id);
     List<CarDetails> getCarsByStatus(String status);
     List<CarDetails> getCarsByBrand(String brand);
+    List<CarDetails> searchByModel(String model);
 }

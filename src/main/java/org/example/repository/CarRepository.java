@@ -8,4 +8,5 @@ import java.util.List;
 public interface CarRepository extends JpaRepository<CarDetails,Long> {
     List<CarDetails> findByStatus(String status);
     List<CarDetails> findByBrand(String brand);
+    List<CarDetails> findByCarModelContainingIgnoreCase(String model);
 }

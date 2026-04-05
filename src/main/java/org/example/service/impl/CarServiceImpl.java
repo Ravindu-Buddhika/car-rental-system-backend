@@ -68,4 +68,9 @@ public class CarServiceImpl implements CarService {
     public List<CarDetails> getCarsByBrand(String brand) {
         return carRepository.findByBrand(brand);
     }
+
+    @Override
+    public List<CarDetails> searchByModel(String model) {
+        return carRepository.findByCarModelContainingIgnoreCase(model);
+    }
 }
