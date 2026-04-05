@@ -1,0 +1,47 @@
+package org.example.service.impl;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.example.model.dto.CustomerDTO;
+import org.example.model.entity.Customer;
+import org.example.model.entity.User;
+import org.example.repository.CustomerRepository;
+import org.example.repository.UserRepository;
+import org.example.service.CustomerService;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@Transactional // ඉතාම වැදගත්!
+@RequiredArgsConstructor // Lombok පාවිච්චි කරලා Repositories ටික Inject කරගන්න
+public class CustomerServiceImpl implements CustomerService {
+
+    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
+    private final ModelMapper modelMapper;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    @Override
+    public void registerCustomer(CustomerDTO customerDTO) {
+        // 1. මුලින්ම User Object එක හදාගන්න (Authentication විස්තර)
+        User user = new User();
+        user.setEmail(customerDTO.getEmail());
+
+        String encodedPassword = passwordEncoder.encode(customerDTO.getPassword());
+        user.setPassword(encodedPassword);
+        user.setRole("ROLE_CUSTOMER");
+
+        // 2. User ව Save කරන්න
+        User savedUser = userRepository.save(user);
+
+        // 3. දැන් Customer Object එක හදාගන්න (Profile විස්තර)
+        Customer customer = modelMapper.map(customerDTO, Customer.class);
+
+        // 4. අර Save කරපු User ව Customer ට සම්බන්ධ කරන්න (Linking)
+        customer.setUser(savedUser);
+
+        // 5. අවසාන වශයෙන් Customer ව Save කරන්න
+        customerRepository.save(customer);
+    }
+}
