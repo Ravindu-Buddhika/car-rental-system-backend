@@ -20,6 +20,6 @@ public class Admin {
 
     private String employeeId;
     @OneToOne
-    @JoinColumn(name = "user_account_id") // Foreign Key එක
-    private User user; // මේක ඇතුළේ තමයි අර User ID 6 තියෙන්නේ.
+    @JoinColumn(name = "user_account_id")
+    private User user;
 }

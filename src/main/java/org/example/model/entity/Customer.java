@@ -18,12 +18,18 @@ public class Customer {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(unique = true, nullable = false)
     private String contactNumber;
+
+    @Column(unique = true, nullable = false)
     private String nic;
+
     private String address;
+
+    @Column(unique = true, nullable = false)
     private String drivingLicenseNumber;
 
     @OneToOne
-    @JoinColumn(name = "user_account_id") // Foreign Key එක
-    private User user; // මේක ඇතුළේ තමයි අර User ID 6 තියෙන්නේ.
+    @JoinColumn(name = "user_account_id")
+    private User user;
 }
