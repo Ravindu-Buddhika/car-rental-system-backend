@@ -50,4 +50,12 @@ public class CarServiceImpl implements CarService {
 
         return carRepository.save(existingCar);
     }
+
+    @Override
+    public void deleteCar(Long id) {
+        if (!carRepository.existsById(id)) {
+            throw new RuntimeException("Cannot delete. Car not found.");
+        }
+        carRepository.deleteById(id);
+    }
 }

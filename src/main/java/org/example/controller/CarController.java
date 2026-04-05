@@ -32,4 +32,9 @@ public class CarController {
     public ResponseEntity<CarDetails> updateCar(@PathVariable Long id, @RequestBody CarDetails car) {
         return ResponseEntity.ok(carService.updateCar(id, car));
     }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteCar(@PathVariable Long id) {
+        carService.deleteCar(id);
+        return ResponseEntity.ok("Car deleted successfully!");
+    }
 }
