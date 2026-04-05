@@ -7,4 +7,5 @@ import java.util.List;
 public interface AdminService {
     public void registerAdmin(AdminDTO adminDTO);
     List<AdminDTO> getAllAdmins();
+    AdminDTO getAdminByEmail(String email);
 }

@@ -12,6 +12,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -37,5 +40,12 @@ public class AdminServiceImpl implements AdminService {
         admin.setUser(savedUser);
 
         adminRepository.save(admin);
+    }
+
+    @Override
+    public List<AdminDTO> getAllAdmins() {
+        return adminRepository.findAll().stream()
+                .map(admin -> modelMapper.map(admin, AdminDTO.class))
+                .collect(Collectors.toList());
     }
 }
