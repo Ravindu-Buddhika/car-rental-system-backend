@@ -1,7 +1,3 @@
-Perfect! A professional README in English will make your GitHub repository look top-notch for any interviewer or examiner.
-
-Here is a comprehensive README.md tailored for your Spring Boot backend, including the new features we planned:
-
 🚗 DriveStream - Advanced Car Rental Management System (Backend)
 DriveStream is a robust, enterprise-grade backend system for a car rental company, built using Spring Boot and MySQL. It moves beyond basic CRUD operations by incorporating Mock GPS Tracking, Automated Penalty Logic, and a comprehensive Admin Dashboard to manage a fleet of vehicles and customer rentals efficiently.
 
