@@ -7,4 +7,5 @@ import java.util.List;
 public interface CarService {
     CarDetails saveCar(CarDetails car);
     List<CarDetails> getAllCars();
+    CarDetails getCarById(Long id);
 }

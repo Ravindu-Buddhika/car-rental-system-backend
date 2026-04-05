@@ -24,4 +24,8 @@ public class CarController {
     public ResponseEntity<List<CarDetails>> getAllCars() {
         return ResponseEntity.ok(carService.getAllCars());
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<CarDetails> getCarById(@PathVariable Long id) {
+        return ResponseEntity.ok(carService.getCarById(id));
+    }
 }

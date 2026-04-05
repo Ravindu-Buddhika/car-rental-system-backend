@@ -23,4 +23,10 @@ public class CarServiceImpl implements CarService {
     public List<CarDetails> getAllCars() {
         return carRepository.findAll();
     }
+
+    @Override
+    public CarDetails getCarById(Long id) {
+        return carRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
+    }
 }
