@@ -33,4 +33,9 @@ public class CustomerController {
     public ResponseEntity<CustomerDTO> getByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(customerService.getCustomerByUserId(userId));
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO dto) {
+        customerService.updateCustomer(id, dto);
+        return ResponseEntity.ok("Customer updated successfully!");
+    }
 }

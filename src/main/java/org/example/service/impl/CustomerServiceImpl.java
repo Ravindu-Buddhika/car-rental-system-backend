@@ -70,4 +70,25 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new RuntimeException("Customer not found for User ID: " + userId));
         return modelMapper.map(customer, CustomerDTO.class);
     }
+    @Override
+    public void updateCustomer(Long id, CustomerDTO customerDTO) {
+        Customer existingCustomer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+
+        existingCustomer.setFullName(customerDTO.getFullName());
+        existingCustomer.setContactNumber(customerDTO.getContactNumber());
+        existingCustomer.setAddress(customerDTO.getAddress());
+        existingCustomer.setDrivingLicenseNumber(customerDTO.getDrivingLicenseNumber());
+        existingCustomer.setNic(customerDTO.getNic());
+        existingCustomer.setEmail(customerDTO.getEmail());
+
+        User linkedUser = existingCustomer.getUser();
+        if (linkedUser != null) {
+            linkedUser.setEmail(customerDTO.getEmail());
+
+            userRepository.save(linkedUser);
+        }
+
+        customerRepository.save(existingCustomer);
+    }
 }

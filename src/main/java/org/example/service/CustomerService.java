@@ -11,4 +11,6 @@ public interface CustomerService {
     CustomerDTO getCustomerByNic(String nic);
 
     CustomerDTO getCustomerByUserId(Long userId);
+
+    void updateCustomer(Long id, CustomerDTO customerDTO);
 }
