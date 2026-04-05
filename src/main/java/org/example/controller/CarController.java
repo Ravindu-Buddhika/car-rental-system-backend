@@ -41,4 +41,8 @@ public class CarController {
     public ResponseEntity<List<CarDetails>> getByStatus(@RequestParam String status) {
         return ResponseEntity.ok(carService.getCarsByStatus(status));
     }
+    @GetMapping("/filter/brand")
+    public ResponseEntity<List<CarDetails>> getByBrand(@RequestParam String brand) {
+        return ResponseEntity.ok(carService.getCarsByBrand(brand));
+    }
 }

@@ -11,4 +11,5 @@ public interface CarService {
     CarDetails updateCar(Long id, CarDetails car);
     void deleteCar(Long id);
     List<CarDetails> getCarsByStatus(String status);
+    List<CarDetails> getCarsByBrand(String brand);
 }
