@@ -6,6 +6,8 @@ import org.example.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/admins")
 @RequiredArgsConstructor
@@ -18,5 +20,9 @@ public class AdminController {
     public ResponseEntity<String> registerAdmin(@RequestBody AdminDTO adminDTO) {
         adminService.registerAdmin(adminDTO);
         return ResponseEntity.ok("Admin registered successfully!");
+    }
+    @GetMapping("/all")
+    public ResponseEntity<List<AdminDTO>> getAllAdmins() {
+        return ResponseEntity.ok(adminService.getAllAdmins());
     }
 }
