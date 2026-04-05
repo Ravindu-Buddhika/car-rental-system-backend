@@ -13,4 +13,5 @@ public interface CarService {
     List<CarDetails> getCarsByStatus(String status);
     List<CarDetails> getCarsByBrand(String brand);
     List<CarDetails> searchByModel(String model);
+    List<CarDetails> getCarsByCategory(String category);
 }
