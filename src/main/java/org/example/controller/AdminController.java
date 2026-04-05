@@ -36,4 +36,9 @@ public class AdminController {
         adminService.updateAdminByEmail(email, dto);
         return ResponseEntity.ok("Admin profile updated successfully!");
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAdmin(@PathVariable Long id) {
+        adminService.deleteAdmin(id);
+        return ResponseEntity.ok("Admin and associated user account deleted successfully!");
+    }
 }

@@ -70,4 +70,11 @@ public class AdminServiceImpl implements AdminService {
 
         adminRepository.save(existingAdmin);
     }
+    @Override
+    public void deleteAdmin(Long id) {
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        adminRepository.delete(admin);
+    }
 }

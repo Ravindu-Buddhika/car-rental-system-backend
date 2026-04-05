@@ -9,4 +9,5 @@ public interface AdminService {
     List<AdminDTO> getAllAdmins();
     AdminDTO getAdminByEmail(String email);
     void updateAdminByEmail(String email, AdminDTO adminDTO);
+    void deleteAdmin(Long id);
 }
