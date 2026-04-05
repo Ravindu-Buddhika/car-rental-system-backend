@@ -25,4 +25,8 @@ public class CustomerController {
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
         return ResponseEntity.ok(customerService.getAllCustomers());
     }
+    @GetMapping("/search/nic/{nic}")
+    public ResponseEntity<CustomerDTO> getByNic(@PathVariable String nic) {
+        return ResponseEntity.ok(customerService.getCustomerByNic(nic));
+    }
 }

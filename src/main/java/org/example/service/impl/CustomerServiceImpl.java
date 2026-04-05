@@ -55,4 +55,11 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(customer -> modelMapper.map(customer, CustomerDTO.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public CustomerDTO getCustomerByNic(String nic) {
+        Customer customer = customerRepository.findByNic(nic)
+                .orElseThrow(() -> new RuntimeException("Customer not found with NIC: " + nic));
+        return modelMapper.map(customer, CustomerDTO.class);
+    }
 }

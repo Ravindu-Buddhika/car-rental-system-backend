@@ -8,4 +8,5 @@ public interface CustomerService {
 
     void registerCustomer(CustomerDTO customerDTO);
     List<CustomerDTO> getAllCustomers();
+    CustomerDTO getCustomerByNic(String nic);
 }
