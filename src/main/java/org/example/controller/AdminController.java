@@ -25,4 +25,8 @@ public class AdminController {
     public ResponseEntity<List<AdminDTO>> getAllAdmins() {
         return ResponseEntity.ok(adminService.getAllAdmins());
     }
+    @GetMapping("/search/email/{email}")
+    public ResponseEntity<AdminDTO> getByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(adminService.getAdminByEmail(email));
+    }
 }

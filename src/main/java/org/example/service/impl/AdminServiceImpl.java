@@ -48,4 +48,10 @@ public class AdminServiceImpl implements AdminService {
                 .map(admin -> modelMapper.map(admin, AdminDTO.class))
                 .collect(Collectors.toList());
     }
+    @Override
+    public AdminDTO getAdminByEmail(String email) {
+        Admin admin = adminRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+        return modelMapper.map(admin, AdminDTO.class);
+    }
 }
