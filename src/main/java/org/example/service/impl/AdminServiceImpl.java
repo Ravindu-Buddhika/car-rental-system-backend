@@ -1,0 +1,41 @@
+package org.example.service.impl;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.example.model.dto.AdminDTO;
+import org.example.model.entity.Admin;
+import org.example.model.entity.User;
+import org.example.repository.AdminRepository;
+import org.example.repository.UserRepository;
+import org.example.service.AdminService;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class AdminServiceImpl implements AdminService {
+
+    private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
+    private final ModelMapper modelMapper;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    @Override
+    public void registerAdmin(AdminDTO adminDTO) {
+        // 1. User (Account) එක හැදීම
+        User user = new User();
+        user.setEmail(adminDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
+        user.setRole("ROLE_ADMIN"); // මෙතන Role එක වෙනස්
+
+        User savedUser = userRepository.save(user);
+
+        // 2. Admin (Profile) එක හැදීම
+        Admin admin = modelMapper.map(adminDTO, Admin.class);
+        admin.setUser(savedUser);
+
+        adminRepository.save(admin);
+    }
+}
