@@ -20,4 +20,8 @@ public class CarController {
     public ResponseEntity<CarDetails> saveCar(@RequestBody CarDetails car) {
         return ResponseEntity.ok(carService.saveCar(car));
     }
+    @GetMapping("/all")
+    public ResponseEntity<List<CarDetails>> getAllCars() {
+        return ResponseEntity.ok(carService.getAllCars());
+    }
 }

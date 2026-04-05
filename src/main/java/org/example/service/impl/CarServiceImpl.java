@@ -6,6 +6,8 @@ import org.example.repository.CarRepository;
 import org.example.service.CarService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
@@ -15,5 +17,10 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarDetails saveCar(CarDetails car) {
         return carRepository.save(car);
+    }
+
+    @Override
+    public List<CarDetails> getAllCars() {
+        return carRepository.findAll();
     }
 }

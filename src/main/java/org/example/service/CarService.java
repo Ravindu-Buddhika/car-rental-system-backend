@@ -2,6 +2,9 @@ package org.example.service;
 
 import org.example.model.entity.CarDetails;
 
+import java.util.List;
+
 public interface CarService {
     CarDetails saveCar(CarDetails car);
+    List<CarDetails> getAllCars();
 }
