@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/customers")
 @RequiredArgsConstructor
-@CrossOrigin // Frontend එකෙන් එන requests වලට ඉඩ දෙන්න
+@CrossOrigin
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -36,7 +36,7 @@ public class CustomerController {
     }
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(Authentication authentication, @RequestBody CustomerDTO dto) {
-        String email = authentication.getName(); // මේකෙන් කෙලින්ම email එක එනවා
+        String email = authentication.getName();
         customerService.updateCustomerByEmail(email, dto);
         return ResponseEntity.ok("Profile updated successfully!");
     }

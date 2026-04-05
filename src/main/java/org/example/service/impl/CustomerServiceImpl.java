@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional // ඉතාම වැදගත්!
-@RequiredArgsConstructor // Lombok පාවිච්චි කරලා Repositories ටික Inject කරගන්න
+@Transactional
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private final UserRepository userRepository;
@@ -27,7 +27,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void registerCustomer(CustomerDTO customerDTO) {
-        // 1. මුලින්ම User Object එක හදාගන්න (Authentication විස්තර)
         User user = new User();
         user.setEmail(customerDTO.getEmail());
 
@@ -35,16 +34,12 @@ public class CustomerServiceImpl implements CustomerService {
         user.setPassword(encodedPassword);
         user.setRole("ROLE_CUSTOMER");
 
-        // 2. User ව Save කරන්න
         User savedUser = userRepository.save(user);
 
-        // 3. දැන් Customer Object එක හදාගන්න (Profile විස්තර)
         Customer customer = modelMapper.map(customerDTO, Customer.class);
 
-        // 4. අර Save කරපු User ව Customer ට සම්බන්ධ කරන්න (Linking)
         customer.setUser(savedUser);
 
-        // 5. අවසාන වශයෙන් Customer ව Save කරන්න
         customerRepository.save(customer);
     }
 
@@ -65,7 +60,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDTO getCustomerByUserId(Long userId) {
-        // User table එක හරහා find කරන එක
         Customer customer = customerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new RuntimeException("Customer not found for User ID: " + userId));
         return modelMapper.map(customer, CustomerDTO.class);
@@ -96,7 +90,6 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        // User එකත් එක්කම මකන්න ඕනේ නම්:
         userRepository.delete(customer.getUser());
         customerRepository.delete(customer);
     }
