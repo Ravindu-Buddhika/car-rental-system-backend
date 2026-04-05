@@ -58,4 +58,9 @@ public class CarServiceImpl implements CarService {
         }
         carRepository.deleteById(id);
     }
+
+    @Override
+    public List<CarDetails> getCarsByStatus(String status) {
+        return carRepository.findByStatus(status);
+    }
 }

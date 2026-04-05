@@ -37,4 +37,8 @@ public class CarController {
         carService.deleteCar(id);
         return ResponseEntity.ok("Car deleted successfully!");
     }
+    @GetMapping("/filter/status")
+    public ResponseEntity<List<CarDetails>> getByStatus(@RequestParam String status) {
+        return ResponseEntity.ok(carService.getCarsByStatus(status));
+    }
 }
