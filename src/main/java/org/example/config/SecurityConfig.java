@@ -18,6 +18,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/customers/register").permitAll()
                         .requestMatchers("/api/v1/admins/register").permitAll()
+                        .requestMatchers("/api/v1/customers/all").permitAll()
+                        .requestMatchers("/api/v1/customers/**").permitAll()
                         .anyRequest().authenticated() // අනිත් ඒවාට login වෙන්න ඕනේ
                 );
         return http.build();
