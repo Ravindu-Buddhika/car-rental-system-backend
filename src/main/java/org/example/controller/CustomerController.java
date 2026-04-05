@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.model.dto.CustomerDTO;
 import org.example.service.CustomerService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,9 +34,15 @@ public class CustomerController {
     public ResponseEntity<CustomerDTO> getByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(customerService.getCustomerByUserId(userId));
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO dto) {
-        customerService.updateCustomer(id, dto);
-        return ResponseEntity.ok("Customer updated successfully!");
+    @PutMapping("/profile")
+    public ResponseEntity<String> updateProfile(Authentication authentication, @RequestBody CustomerDTO dto) {
+        String email = authentication.getName(); // මේකෙන් කෙලින්ම email එක එනවා
+        customerService.updateCustomerByEmail(email, dto);
+        return ResponseEntity.ok("Profile updated successfully!");
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.ok("Customer and associated user account deleted successfully!");
     }
 }

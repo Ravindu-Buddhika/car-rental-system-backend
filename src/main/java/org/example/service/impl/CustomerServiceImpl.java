@@ -71,9 +71,9 @@ public class CustomerServiceImpl implements CustomerService {
         return modelMapper.map(customer, CustomerDTO.class);
     }
     @Override
-    public void updateCustomer(Long id, CustomerDTO customerDTO) {
-        Customer existingCustomer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+    public void updateCustomerByEmail(String email, CustomerDTO customerDTO) {
+        Customer existingCustomer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Customer not found with email: " + email));
 
         existingCustomer.setFullName(customerDTO.getFullName());
         existingCustomer.setContactNumber(customerDTO.getContactNumber());
@@ -90,5 +90,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customerRepository.save(existingCustomer);
+    }
+    @Override
+    public void deleteCustomer(Long id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        // User එකත් එක්කම මකන්න ඕනේ නම්:
+        userRepository.delete(customer.getUser());
+        customerRepository.delete(customer);
     }
 }
