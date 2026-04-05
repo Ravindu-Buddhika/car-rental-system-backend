@@ -83,4 +83,9 @@ public class CarServiceImpl implements CarService {
     public List<CarDetails> getCarsByTransmission(String transmission) {
         return carRepository.findByTransmission(transmission);
     }
+
+    @Override
+    public List<CarDetails> getCarsByFuelType(String fuelType) {
+        return carRepository.findByFuelType(fuelType);
+    }
 }

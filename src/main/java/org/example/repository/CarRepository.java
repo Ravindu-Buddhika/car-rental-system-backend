@@ -11,4 +11,5 @@ public interface CarRepository extends JpaRepository<CarDetails,Long> {
     List<CarDetails> findByCarModelContainingIgnoreCase(String model);
     List<CarDetails> findByCategory(String category);
     List<CarDetails> findByTransmission(String transmission);
+    List<CarDetails> findByFuelType(String fuelType);
 }

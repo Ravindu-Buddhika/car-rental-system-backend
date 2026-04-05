@@ -57,4 +57,8 @@ public class CarController {
     public ResponseEntity<List<CarDetails>> getByTransmission(@RequestParam String transmission) {
         return ResponseEntity.ok(carService.getCarsByTransmission(transmission));
     }
+    @GetMapping("/filter/fuel")
+    public ResponseEntity<List<CarDetails>> getByFuelType(@RequestParam String fuelType) {
+        return ResponseEntity.ok(carService.getCarsByFuelType(fuelType));
+    }
 }
