@@ -12,6 +12,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional // ඉතාම වැදගත්!
 @RequiredArgsConstructor // Lombok පාවිච්චි කරලා Repositories ටික Inject කරගන්න
@@ -43,5 +46,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         // 5. අවසාන වශයෙන් Customer ව Save කරන්න
         customerRepository.save(customer);
+    }
+
+    @Override
+    public List<CustomerDTO> getAllCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+        return customers.stream()
+                .map(customer -> modelMapper.map(customer, CustomerDTO.class))
+                .collect(Collectors.toList());
     }
 }

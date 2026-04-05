@@ -6,6 +6,8 @@ import org.example.service.CustomerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/customers")
 @RequiredArgsConstructor
@@ -18,5 +20,9 @@ public class CustomerController {
     public ResponseEntity<String> registerCustomer(@RequestBody CustomerDTO customerDTO) {
         customerService.registerCustomer(customerDTO);
         return ResponseEntity.ok("Customer registered successfully!");
+    }
+    @GetMapping("/all")
+    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
+        return ResponseEntity.ok(customerService.getAllCustomers());
     }
 }
