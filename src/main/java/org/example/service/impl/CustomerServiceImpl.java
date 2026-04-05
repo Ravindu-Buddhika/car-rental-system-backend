@@ -62,4 +62,12 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new RuntimeException("Customer not found with NIC: " + nic));
         return modelMapper.map(customer, CustomerDTO.class);
     }
+
+    @Override
+    public CustomerDTO getCustomerByUserId(Long userId) {
+        // User table එක හරහා find කරන එක
+        Customer customer = customerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new RuntimeException("Customer not found for User ID: " + userId));
+        return modelMapper.map(customer, CustomerDTO.class);
+    }
 }

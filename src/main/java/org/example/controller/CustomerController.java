@@ -29,4 +29,8 @@ public class CustomerController {
     public ResponseEntity<CustomerDTO> getByNic(@PathVariable String nic) {
         return ResponseEntity.ok(customerService.getCustomerByNic(nic));
     }
+    @GetMapping("/search/user/{userId}")
+    public ResponseEntity<CustomerDTO> getByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(customerService.getCustomerByUserId(userId));
+    }
 }
