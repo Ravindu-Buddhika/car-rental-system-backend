@@ -20,16 +20,18 @@ public class CarDetails {
     private String plateNumber;
 
     private String fuelType;
-    private String transmission; // Auto, Manual
-    private String category; // Sedan, SUV, Luxury
+    private String transmission;
+    private String category;
     private Integer seatingCapacity;
 
     private Double dailyRate;
-    private String status; // Available, Rented, Maintenance
+    private String status;
     private Integer year;
 
     @Column(length = 1000)
     private String description;
+
+    private String imageUrl;
 
     private Double currentLat;
     private Double currentLng;
