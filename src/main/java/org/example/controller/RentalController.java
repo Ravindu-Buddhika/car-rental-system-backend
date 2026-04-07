@@ -6,6 +6,8 @@ import org.example.service.RentalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/rentals")
 @RequiredArgsConstructor
@@ -20,6 +22,10 @@ public class RentalController {
     @PutMapping("/return/{id}")
     public ResponseEntity<Rental> completeRental(@PathVariable Long id) {
         return ResponseEntity.ok(rentalService.completeRental(id));
+    }
+    @GetMapping("/all")
+    public ResponseEntity<List<Rental>> getAllRentals() {
+        return ResponseEntity.ok(rentalService.getAllRentals());
     }
 
 }

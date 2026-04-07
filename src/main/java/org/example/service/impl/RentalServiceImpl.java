@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +59,10 @@ public class RentalServiceImpl implements RentalService {
         carRepository.save(car);
 
         return rentalRepository.save(rental);
+    }
+
+    @Override
+    public List<Rental> getAllRentals() {
+        return rentalRepository.findAll();
     }
 }
