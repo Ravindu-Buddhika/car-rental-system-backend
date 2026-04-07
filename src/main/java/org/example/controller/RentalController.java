@@ -17,5 +17,9 @@ public class RentalController {
     public ResponseEntity<Rental> createRental(@RequestBody Rental rental) {
         return ResponseEntity.ok(rentalService.createRental(rental));
     }
+    @PutMapping("/return/{id}")
+    public ResponseEntity<Rental> completeRental(@PathVariable Long id) {
+        return ResponseEntity.ok(rentalService.completeRental(id));
+    }
 
 }
