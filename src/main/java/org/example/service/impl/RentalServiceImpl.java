@@ -49,11 +49,22 @@ public class RentalServiceImpl implements RentalService {
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new RuntimeException("Rental record not found!"));
 
-        // 1. භාරදුන් දිනය අද ලෙස සටහන් කිරීම
-        rental.setActualReturnDate(LocalDate.now());
+        LocalDate today = LocalDate.now();
+        rental.setActualReturnDate(today);
         rental.setRentalStatus("Completed");
 
-        // 2. කාර් එක ආපහු 'Available' කරනවා
+        long lateDays = ChronoUnit.DAYS.between(rental.getEndDate(), today);
+
+        if (lateDays > 0) {
+            double penaltyPerDay = 500.0;
+            double totalPenalty = lateDays * penaltyPerDay;
+
+            rental.setPenaltyFee(totalPenalty);
+            rental.setTotalAmount(rental.getTotalAmount() + totalPenalty);
+        } else {
+            rental.setPenaltyFee(0.0);
+        }
+
         CarDetails car = rental.getCar();
         car.setStatus("Available");
         carRepository.save(car);
