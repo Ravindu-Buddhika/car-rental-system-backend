@@ -8,4 +8,5 @@ public interface RentalService {
     Rental createRental(Rental rental);
     Rental completeRental(Long rentalId);
     List<Rental> getAllRentals();
+    List<Rental> getRentalsByEmail(String email);
 }

@@ -5,6 +5,7 @@ import org.example.model.entity.Rental;
 import org.example.service.RentalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -27,5 +28,11 @@ public class RentalController {
     public ResponseEntity<List<Rental>> getAllRentals() {
         return ResponseEntity.ok(rentalService.getAllRentals());
     }
+    @GetMapping("/my-rentals")
+    public ResponseEntity<List<Rental>> getMyRentals(Authentication authentication) {
+        String email = authentication.getName();
 
+        List<Rental> myRentals = rentalService.getRentalsByEmail(email);
+        return ResponseEntity.ok(myRentals);
+    }
 }

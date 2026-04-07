@@ -65,4 +65,9 @@ public class RentalServiceImpl implements RentalService {
     public List<Rental> getAllRentals() {
         return rentalRepository.findAll();
     }
+
+    @Override
+    public List<Rental> getRentalsByEmail(String email) {
+        return rentalRepository.findByCustomer_User_Email(email);
+    }
 }
