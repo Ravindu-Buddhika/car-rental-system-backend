@@ -14,18 +14,32 @@ public class CarDetails {
     private Long carId;
 
     private String carModel;
-    private String brand;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
     @Column(unique = true)
     private String plateNumber;
 
-    private String fuelType;
-    private String transmission;
-    private String category;
-    private Integer seatingCapacity;
+    @ManyToOne
+    @JoinColumn(name = "fuel_type_id")
+    private FuelType fuelType;
+
+    @ManyToOne
+    @JoinColumn(name = "transmission_id")
+    private Transmission transmission;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "seating_capacity_id")
+    private SeatingCapacity seatingCapacity;
 
     private Double dailyRate;
-    private String status;
+    private String status; // Available, Maintenance, Rent වගේ status String එකක් විදිහට තියෙන එක පහසුයි
     private Integer year;
 
     @Column(length = 1000)
