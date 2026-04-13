@@ -1,6 +1,7 @@
 package org.example.service.impl;
 
 import org.example.model.dto.request.LookupDTO;
+import org.example.model.entity.Category;
 import org.example.repository.CategoryRepository;
 import org.example.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public LookupDTO saveCategory(String name) {
-        return null;
+        Category category = new Category();
+        category.setCategoryName(name);
+        Category savedCategory = categoryRepository.save(category);
+        return new LookupDTO(savedCategory.getId(), savedCategory.getCategoryName());
     }
 }
