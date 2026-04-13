@@ -1,6 +1,7 @@
 package org.example.service.impl;
 
 import org.example.model.dto.request.LookupDTO;
+import org.example.model.entity.Transmission;
 import org.example.repository.TransmissionRepository;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public class TransmissionService implements org.example.service.TransmissionServ
 
     @Override
     public LookupDTO saveTransmission(String type) {
-        return null;
+        Transmission t = new Transmission();
+        t.setTransmissionType(type);
+        Transmission saved = transmissionRepository.save(t);
+        return new LookupDTO(saved.getId(), saved.getTransmissionType());
     }
 }
