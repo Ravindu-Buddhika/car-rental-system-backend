@@ -1,6 +1,7 @@
 package org.example.service.impl;
 
 import org.example.model.dto.request.LookupDTO;
+import org.example.model.entity.Brand;
 import org.example.repository.BrandRepository;
 import org.example.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public LookupDTO saveBrand(String name) {
-        return null;
+        Brand brand = new Brand();
+        brand.setBrandName(name);
+        Brand saved = brandRepository.save(brand);
+        return new LookupDTO(saved.getId(), saved.getBrandName());
     }
 }
