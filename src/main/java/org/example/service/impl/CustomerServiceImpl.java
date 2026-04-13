@@ -2,7 +2,8 @@ package org.example.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.model.dto.CustomerDTO;
+import org.example.model.dto.request.CustomerRequestDTO;
+import org.example.model.dto.response.CustomerResponseDTO;
 import org.example.model.entity.Customer;
 import org.example.model.entity.User;
 import org.example.repository.CustomerRepository;
@@ -26,77 +27,78 @@ public class CustomerServiceImpl implements CustomerService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public void registerCustomer(CustomerDTO customerDTO) {
+    public CustomerResponseDTO registerCustomer(CustomerRequestDTO dto) {
+        // 1. User Account එක හැදීම
         User user = new User();
-        user.setEmail(customerDTO.getEmail());
-
-        String encodedPassword = passwordEncoder.encode(customerDTO.getPassword());
-        user.setPassword(encodedPassword);
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRole("ROLE_CUSTOMER");
-
         User savedUser = userRepository.save(user);
 
-        Customer customer = modelMapper.map(customerDTO, Customer.class);
-
+        // 2. Customer Profile එක හැදීම
+        Customer customer = modelMapper.map(dto, Customer.class);
         customer.setUser(savedUser);
 
-        customerRepository.save(customer);
+        Customer savedCustomer = customerRepository.save(customer);
+        return mapToResponseDTO(savedCustomer);
     }
 
     @Override
-    public List<CustomerDTO> getAllCustomers() {
-        List<Customer> customers = customerRepository.findAll();
-        return customers.stream()
-                .map(customer -> modelMapper.map(customer, CustomerDTO.class))
+    public List<CustomerResponseDTO> getAllCustomers() {
+        return customerRepository.findAll().stream()
+                .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CustomerDTO getCustomerByNic(String nic) {
+    public CustomerResponseDTO getCustomerByNic(String nic) {
         Customer customer = customerRepository.findByNic(nic)
                 .orElseThrow(() -> new RuntimeException("Customer not found with NIC: " + nic));
-        return modelMapper.map(customer, CustomerDTO.class);
+        return mapToResponseDTO(customer);
     }
 
     @Override
-    public CustomerDTO getCustomerByUserId(Long userId) {
+    public CustomerResponseDTO getCustomerByUserId(Long userId) {
         Customer customer = customerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new RuntimeException("Customer not found for User ID: " + userId));
-        return modelMapper.map(customer, CustomerDTO.class);
+        return mapToResponseDTO(customer);
     }
+
     @Override
-    public void updateCustomerByEmail(String email, CustomerDTO customerDTO) {
+    public CustomerResponseDTO updateCustomerByEmail(String email, CustomerRequestDTO dto) {
         Customer existingCustomer = customerRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Customer not found with email: " + email));
 
-        existingCustomer.setFullName(customerDTO.getFullName());
-        existingCustomer.setContactNumber(customerDTO.getContactNumber());
-        existingCustomer.setAddress(customerDTO.getAddress());
-        existingCustomer.setDrivingLicenseNumber(customerDTO.getDrivingLicenseNumber());
-        existingCustomer.setNic(customerDTO.getNic());
-        existingCustomer.setEmail(customerDTO.getEmail());
+        // Field updates
+        existingCustomer.setFullName(dto.getFullName());
+        existingCustomer.setContactNumber(dto.getContactNumber());
+        existingCustomer.setAddress(dto.getAddress());
+        existingCustomer.setDrivingLicenseNumber(dto.getDrivingLicenseNumber());
+        existingCustomer.setNic(dto.getNic());
+        existingCustomer.setEmail(dto.getEmail());
 
-        User linkedUser = existingCustomer.getUser();
-        if (linkedUser != null) {
-            linkedUser.setEmail(customerDTO.getEmail());
-
-            userRepository.save(linkedUser);
+        // User Table update
+        if (existingCustomer.getUser() != null) {
+            existingCustomer.getUser().setEmail(dto.getEmail());
+            userRepository.save(existingCustomer.getUser());
         }
 
-        customerRepository.save(existingCustomer);
+        return mapToResponseDTO(customerRepository.save(existingCustomer));
     }
+
     @Override
-    @Transactional
     public void deleteCustomer(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
-
         User user = customer.getUser();
-
         customerRepository.delete(customer);
+        if (user != null) userRepository.delete(user);
+    }
 
-        if (user != null) {
-            userRepository.delete(user);
-        }
+    // ID එක පැටලෙන නිසා හදපු Helper Method එක
+    private CustomerResponseDTO mapToResponseDTO(Customer customer) {
+        CustomerResponseDTO resp = modelMapper.map(customer, CustomerResponseDTO.class);
+        resp.setId(customer.getCustomerId()); // Entity එකේ customerId එක DTO එකේ id එකට සෙට් කරනවා
+        return resp;
     }
 }

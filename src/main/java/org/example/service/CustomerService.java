@@ -1,19 +1,17 @@
 package org.example.service;
 
 import org.example.model.dto.CustomerDTO;
+import org.example.model.dto.request.CustomerRequestDTO;
+import org.example.model.dto.response.CustomerResponseDTO;
 
 import java.util.List;
 
 public interface CustomerService {
 
-    void registerCustomer(CustomerDTO customerDTO);
-    List<CustomerDTO> getAllCustomers();
-    CustomerDTO getCustomerByNic(String nic);
-
-    CustomerDTO getCustomerByUserId(Long userId);
-
-
-    void updateCustomerByEmail(String email, CustomerDTO customerDTO);
-
+    CustomerResponseDTO registerCustomer(CustomerRequestDTO dto);
+    List<CustomerResponseDTO> getAllCustomers();
+    CustomerResponseDTO getCustomerByNic(String nic);
+    CustomerResponseDTO getCustomerByUserId(Long userId);
+    CustomerResponseDTO updateCustomerByEmail(String email, CustomerRequestDTO dto);
     void deleteCustomer(Long id);
 }

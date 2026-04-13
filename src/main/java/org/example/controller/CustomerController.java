@@ -1,7 +1,8 @@
 package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.dto.CustomerDTO;
+import org.example.model.dto.request.CustomerRequestDTO;
+import org.example.model.dto.response.CustomerResponseDTO;
 import org.example.service.CustomerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,31 +19,34 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerCustomer(@RequestBody CustomerDTO customerDTO) {
-        customerService.registerCustomer(customerDTO);
-        return ResponseEntity.ok("Customer registered successfully!");
+    public ResponseEntity<CustomerResponseDTO> registerCustomer(@RequestBody CustomerRequestDTO dto) {
+        return ResponseEntity.ok(customerService.registerCustomer(dto));
     }
+
     @GetMapping("/all")
-    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
+    public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
         return ResponseEntity.ok(customerService.getAllCustomers());
     }
+
     @GetMapping("/search/nic/{nic}")
-    public ResponseEntity<CustomerDTO> getByNic(@PathVariable String nic) {
+    public ResponseEntity<CustomerResponseDTO> getByNic(@PathVariable String nic) {
         return ResponseEntity.ok(customerService.getCustomerByNic(nic));
     }
+
     @GetMapping("/search/user/{userId}")
-    public ResponseEntity<CustomerDTO> getByUserId(@PathVariable Long userId) {
+    public ResponseEntity<CustomerResponseDTO> getByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(customerService.getCustomerByUserId(userId));
     }
+
     @PutMapping("/profile")
-    public ResponseEntity<String> updateProfile(Authentication authentication, @RequestBody CustomerDTO dto) {
+    public ResponseEntity<CustomerResponseDTO> updateProfile(Authentication authentication, @RequestBody CustomerRequestDTO dto) {
         String email = authentication.getName();
-        customerService.updateCustomerByEmail(email, dto);
-        return ResponseEntity.ok("Profile updated successfully!");
+        return ResponseEntity.ok(customerService.updateCustomerByEmail(email, dto));
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
-        return ResponseEntity.ok("Customer and associated user account deleted successfully!");
+        return ResponseEntity.ok("Customer deleted successfully!");
     }
 }
