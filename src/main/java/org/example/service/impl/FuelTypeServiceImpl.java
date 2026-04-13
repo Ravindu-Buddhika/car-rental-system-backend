@@ -1,6 +1,7 @@
 package org.example.service.impl;
 
 import org.example.model.dto.request.LookupDTO;
+import org.example.model.entity.FuelType;
 import org.example.repository.FuelTypeRepository;
 import org.example.service.FuelTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class FuelTypeServiceImpl implements FuelTypeService {
 
     @Override
     public LookupDTO saveFuelType(String name) {
-        return null;
+        FuelType ft = new FuelType();
+        ft.setTypeName(name);
+        FuelType saved = fuelTypeRepository.save(ft);
+        return new LookupDTO(saved.getId(), saved.getTypeName());
     }
 }
