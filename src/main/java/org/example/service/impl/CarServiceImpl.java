@@ -1,96 +1,103 @@
 package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.entity.CarDetails;
-import org.example.repository.CarRepository;
+import org.example.model.dto.request.CarRequestDTO;
+import org.example.model.dto.response.CarResponseDTO;
+import org.example.model.entity.*;
+import org.example.repository.*;
 import org.example.service.CarService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
+    private final BrandRepository brandRepository;
+    private final CategoryRepository categoryRepository;
+    private final FuelTypeRepository fuelTypeRepository;
+    private final TransmissionRepository transmissionRepository;
+    private final SeatingCapacityRepository seatingRepository;
 
     @Override
-    public CarDetails saveCar(CarDetails car) {
-        return carRepository.save(car);
+    public CarResponseDTO saveCar(CarRequestDTO dto) {
+        CarDetails car = new CarDetails();
+        return mapToResponseDTO(carRepository.save(mapToEntity(car, dto)));
     }
 
     @Override
-    public List<CarDetails> getAllCars() {
-        return carRepository.findAll();
+    public List<CarResponseDTO> getAllCars() {
+        return carRepository.findAll().stream().map(this::mapToResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public CarDetails getCarById(Long id) {
-        return carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
+    public CarResponseDTO getCarById(Long id) {
+        return mapToResponseDTO(carRepository.findById(id).orElseThrow(() -> new RuntimeException("Car not found!")));
     }
+
     @Override
-    public CarDetails updateCar(Long id, CarDetails car) {
-        CarDetails existingCar = getCarById(id);
-
-        existingCar.setCarModel(car.getCarModel());
-        existingCar.setBrand(car.getBrand());
-        existingCar.setPlateNumber(car.getPlateNumber());
-        existingCar.setFuelType(car.getFuelType());
-        existingCar.setTransmission(car.getTransmission());
-        existingCar.setCategory(car.getCategory());
-        existingCar.setSeatingCapacity(car.getSeatingCapacity());
-        existingCar.setDailyRate(car.getDailyRate());
-        existingCar.setStatus(car.getStatus());
-        existingCar.setYear(car.getYear());
-        existingCar.setDescription(car.getDescription());
-        existingCar.setImageUrl(car.getImageUrl());
-        existingCar.setCurrentLat(car.getCurrentLat());
-        existingCar.setCurrentLng(car.getCurrentLng());
-
-        return carRepository.save(existingCar);
+    public CarResponseDTO updateCar(Long id, CarRequestDTO dto) {
+        CarDetails car = carRepository.findById(id).orElseThrow(() -> new RuntimeException("Car not found!"));
+        return mapToResponseDTO(carRepository.save(mapToEntity(car, dto)));
     }
 
     @Override
     public void deleteCar(Long id) {
-        if (!carRepository.existsById(id)) {
-            throw new RuntimeException("Cannot delete. Car not found.");
-        }
         carRepository.deleteById(id);
     }
 
     @Override
-    public List<CarDetails> getCarsByStatus(String status) {
-        return carRepository.findByStatus(status);
+    public List<CarResponseDTO> getFilteredCars(Long brandId, Long categoryId, Long fuelTypeId, Long transmissionId, Long capacityId, String status) {
+        return carRepository.findCarsByFilters(brandId, categoryId, fuelTypeId, transmissionId, capacityId, status)
+                .stream().map(this::mapToResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<CarDetails> getCarsByBrand(String brand) {
-        return carRepository.findByBrand(brand);
+    public List<CarResponseDTO> searchByModel(String model) {
+        return carRepository.findByCarModelContainingIgnoreCase(model)
+                .stream().map(this::mapToResponseDTO).collect(Collectors.toList());
     }
 
-    @Override
-    public List<CarDetails> searchByModel(String model) {
-        return carRepository.findByCarModelContainingIgnoreCase(model);
+    private CarDetails mapToEntity(CarDetails car, CarRequestDTO dto) {
+        car.setCarModel(dto.getCarModel());
+        car.setPlateNumber(dto.getPlateNumber());
+        car.setDailyRate(dto.getDailyRate());
+        car.setStatus(dto.getStatus());
+        car.setYear(dto.getYear());
+        car.setDescription(dto.getDescription());
+        car.setImageUrl(dto.getImageUrl());
+        car.setCurrentLat(dto.getCurrentLat());
+        car.setCurrentLng(dto.getCurrentLng());
+
+        car.setBrand(brandRepository.findById(dto.getBrandId()).orElse(null));
+        car.setCategory(categoryRepository.findById(dto.getCategoryId()).orElse(null));
+        car.setFuelType(fuelTypeRepository.findById(dto.getFuelTypeId()).orElse(null));
+        car.setTransmission(transmissionRepository.findById(dto.getTransmissionId()).orElse(null));
+        car.setSeatingCapacity(seatingRepository.findById(dto.getSeatingCapacityId()).orElse(null));
+        return car;
     }
 
-    @Override
-    public List<CarDetails> getCarsByCategory(String category) {
-        return carRepository.findByCategory(category);
-    }
+    private CarResponseDTO mapToResponseDTO(CarDetails car) {
+        CarResponseDTO resp = new CarResponseDTO();
+        resp.setCarId(car.getCarId());
+        resp.setCarModel(car.getCarModel());
+        resp.setPlateNumber(car.getPlateNumber());
+        resp.setDailyRate(car.getDailyRate());
+        resp.setStatus(car.getStatus());
+        resp.setYear(car.getYear());
+        resp.setDescription(car.getDescription());
+        resp.setImageUrl(car.getImageUrl());
+        resp.setCurrentLat(car.getCurrentLat());
+        resp.setCurrentLng(car.getCurrentLng());
 
-    @Override
-    public List<CarDetails> getCarsByTransmission(String transmission) {
-        return carRepository.findByTransmission(transmission);
-    }
-
-    @Override
-    public List<CarDetails> getCarsByFuelType(String fuelType) {
-        return carRepository.findByFuelType(fuelType);
-    }
-
-    @Override
-    public List<CarDetails> getCarsBySeatingCapacity(Integer capacity) {
-        return carRepository.findBySeatingCapacity(capacity);
+        if (car.getBrand() != null) resp.setBrandName(car.getBrand().getBrandName());
+        if (car.getCategory() != null) resp.setCategoryName(car.getCategory().getCategoryName());
+        if (car.getFuelType() != null) resp.setFuelTypeName(car.getFuelType().getTypeName());
+        if (car.getTransmission() != null) resp.setTransmissionType(car.getTransmission().getTransmissionType());
+        if (car.getSeatingCapacity() != null) resp.setSeatingCapacity(car.getSeatingCapacity().getCapacity());
+        return resp;
     }
 }

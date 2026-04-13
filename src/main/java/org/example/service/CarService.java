@@ -1,20 +1,19 @@
 package org.example.service;
 
-import org.example.model.entity.CarDetails;
-
+import org.example.model.dto.request.CarRequestDTO;
+import org.example.model.dto.response.CarResponseDTO;
 import java.util.List;
 
 public interface CarService {
-    CarDetails saveCar(CarDetails car);
-    List<CarDetails> getAllCars();
-    CarDetails getCarById(Long id);
-    CarDetails updateCar(Long id, CarDetails car);
+    CarResponseDTO saveCar(CarRequestDTO carDTO);
+    List<CarResponseDTO> getAllCars();
+    CarResponseDTO getCarById(Long id);
+    CarResponseDTO updateCar(Long id, CarRequestDTO carDTO);
     void deleteCar(Long id);
-    List<CarDetails> getCarsByStatus(String status);
-    List<CarDetails> getCarsByBrand(String brand);
-    List<CarDetails> searchByModel(String model);
-    List<CarDetails> getCarsByCategory(String category);
-    List<CarDetails> getCarsByTransmission(String transmission);
-    List<CarDetails> getCarsByFuelType(String fuelType);
-    List<CarDetails> getCarsBySeatingCapacity(Integer capacity);
+
+    // Advance Filter Method
+    List<CarResponseDTO> getFilteredCars(Long brandId, Long categoryId, Long fuelTypeId,
+                                         Long transmissionId, Long capacityId, String status);
+
+    List<CarResponseDTO> searchByModel(String model);
 }

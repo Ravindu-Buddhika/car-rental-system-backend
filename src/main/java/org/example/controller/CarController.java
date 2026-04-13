@@ -1,7 +1,8 @@
 package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.entity.CarDetails;
+import org.example.model.dto.request.CarRequestDTO;
+import org.example.model.dto.response.CarResponseDTO;
 import org.example.service.CarService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,52 +18,40 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping("/save")
-    public ResponseEntity<CarDetails> saveCar(@RequestBody CarDetails car) {
-        return ResponseEntity.ok(carService.saveCar(car));
+    public ResponseEntity<CarResponseDTO> saveCar(@RequestBody CarRequestDTO carDTO) {
+        return ResponseEntity.ok(carService.saveCar(carDTO));
     }
+
     @GetMapping("/all")
-    public ResponseEntity<List<CarDetails>> getAllCars() {
+    public ResponseEntity<List<CarResponseDTO>> getAllCars() {
         return ResponseEntity.ok(carService.getAllCars());
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<CarDetails> getCarById(@PathVariable Long id) {
-        return ResponseEntity.ok(carService.getCarById(id));
+
+    // මෙන්න අලුත් Advance Filter Endpoint එක
+    @GetMapping("/filter")
+    public ResponseEntity<List<CarResponseDTO>> getFilteredCars(
+            @RequestParam(required = false) Long brandId,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long fuelTypeId,
+            @RequestParam(required = false) Long transmissionId,
+            @RequestParam(required = false) Long capacityId,
+            @RequestParam(required = false) String status) {
+        return ResponseEntity.ok(carService.getFilteredCars(brandId, categoryId, fuelTypeId, transmissionId, capacityId, status));
     }
-    @PutMapping("/update/{id}")
-    public ResponseEntity<CarDetails> updateCar(@PathVariable Long id, @RequestBody CarDetails car) {
-        return ResponseEntity.ok(carService.updateCar(id, car));
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CarResponseDTO>> searchByModel(@RequestParam String model) {
+        return ResponseEntity.ok(carService.searchByModel(model));
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteCar(@PathVariable Long id) {
         carService.deleteCar(id);
         return ResponseEntity.ok("Car deleted successfully!");
     }
-    @GetMapping("/filter/status")
-    public ResponseEntity<List<CarDetails>> getByStatus(@RequestParam String status) {
-        return ResponseEntity.ok(carService.getCarsByStatus(status));
-    }
-    @GetMapping("/filter/brand")
-    public ResponseEntity<List<CarDetails>> getByBrand(@RequestParam String brand) {
-        return ResponseEntity.ok(carService.getCarsByBrand(brand));
-    }
-    @GetMapping("/search/model")
-    public ResponseEntity<List<CarDetails>> searchByModel(@RequestParam String model) {
-        return ResponseEntity.ok(carService.searchByModel(model));
-    }
-    @GetMapping("/filter/category")
-    public ResponseEntity<List<CarDetails>> searchByCategory(@RequestParam String category) {
-        return ResponseEntity.ok(carService.getCarsByCategory(category));
-    }
-    @GetMapping("/filter/transmission")
-    public ResponseEntity<List<CarDetails>> getByTransmission(@RequestParam String transmission) {
-        return ResponseEntity.ok(carService.getCarsByTransmission(transmission));
-    }
-    @GetMapping("/filter/fuel")
-    public ResponseEntity<List<CarDetails>> getByFuelType(@RequestParam String fuelType) {
-        return ResponseEntity.ok(carService.getCarsByFuelType(fuelType));
-    }
-    @GetMapping("/filter/capacity")
-    public ResponseEntity<List<CarDetails>> getByCapacity(@RequestParam Integer capacity) {
-        return ResponseEntity.ok(carService.getCarsBySeatingCapacity(capacity));
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<CarResponseDTO> updateCar(@PathVariable Long id, @RequestBody CarRequestDTO carDTO) {
+        return ResponseEntity.ok(carService.updateCar(id, carDTO));
     }
 }
