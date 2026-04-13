@@ -1,6 +1,7 @@
 package org.example.service.impl;
 
 import org.example.model.dto.request.LookupDTO;
+import org.example.model.entity.SeatingCapacity;
 import org.example.repository.SeatingCapacityRepository;
 import org.example.service.SeatingCapacityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class SeatingCapacityServiceImpl implements SeatingCapacityService {
 
     @Override
     public LookupDTO saveCapacity(Integer capacity) {
-        return null;
+        SeatingCapacity sc = new SeatingCapacity();
+        sc.setCapacity(capacity);
+        SeatingCapacity saved = seatingRepository.save(sc);
+        return new LookupDTO(saved.getId(), String.valueOf(saved.getCapacity()));
     }
 }
