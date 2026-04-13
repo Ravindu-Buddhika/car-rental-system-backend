@@ -28,8 +28,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/customers/register").permitAll()
                         .requestMatchers("/api/v1/admins/register").permitAll()
+                        .requestMatchers("/api/v1/cars/**").permitAll()
                         .requestMatchers("/api/v1/customers/**").authenticated()
                         .requestMatchers("/api/v1/admins/**").authenticated()
+                        .requestMatchers("/api/v1/rentals/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
