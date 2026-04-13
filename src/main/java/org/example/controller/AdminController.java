@@ -1,7 +1,8 @@
 package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.dto.AdminDTO;
+import org.example.model.dto.request.AdminRequestDTO;
+import org.example.model.dto.response.AdminResponseDTO;
 import org.example.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,24 +19,26 @@ public class AdminController {
     private final AdminService adminService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerAdmin(@RequestBody AdminDTO adminDTO) {
-        adminService.registerAdmin(adminDTO);
-        return ResponseEntity.ok("Admin registered successfully!");
+    public ResponseEntity<AdminResponseDTO> registerAdmin(@RequestBody AdminRequestDTO adminDTO) {
+        return ResponseEntity.ok(adminService.registerAdmin(adminDTO));
     }
+
     @GetMapping("/all")
-    public ResponseEntity<List<AdminDTO>> getAllAdmins() {
+    public ResponseEntity<List<AdminResponseDTO>> getAllAdmins() {
         return ResponseEntity.ok(adminService.getAllAdmins());
     }
+
     @GetMapping("/search/email/{email}")
-    public ResponseEntity<AdminDTO> getByEmail(@PathVariable String email) {
+    public ResponseEntity<AdminResponseDTO> getByEmail(@PathVariable String email) {
         return ResponseEntity.ok(adminService.getAdminByEmail(email));
     }
+
     @PutMapping("/profile")
-    public ResponseEntity<String> updateProfile(Authentication authentication, @RequestBody AdminDTO dto) {
+    public ResponseEntity<AdminResponseDTO> updateProfile(Authentication authentication, @RequestBody AdminRequestDTO dto) {
         String email = authentication.getName();
-        adminService.updateAdminByEmail(email, dto);
-        return ResponseEntity.ok("Admin profile updated successfully!");
+        return ResponseEntity.ok(adminService.updateAdminByEmail(email, dto));
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAdmin(@PathVariable Long id) {
         adminService.deleteAdmin(id);

@@ -2,7 +2,8 @@ package org.example.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.model.dto.AdminDTO;
+import org.example.model.dto.request.AdminRequestDTO;
+import org.example.model.dto.response.AdminResponseDTO;
 import org.example.model.entity.Admin;
 import org.example.model.entity.User;
 import org.example.repository.AdminRepository;
@@ -26,40 +27,43 @@ public class AdminServiceImpl implements AdminService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public void registerAdmin(AdminDTO adminDTO) {
-        // 1. User (Account) එක හැදීම
+    public AdminResponseDTO registerAdmin(AdminRequestDTO adminDTO) {
         User user = new User();
         user.setEmail(adminDTO.getEmail());
         user.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
-        user.setRole("ROLE_ADMIN"); // මෙතන Role එක වෙනස්
+        user.setRole("ROLE_ADMIN");
 
         User savedUser = userRepository.save(user);
 
-        // 2. Admin (Profile) එක හැදීම
         Admin admin = modelMapper.map(adminDTO, Admin.class);
         admin.setUser(savedUser);
 
-        adminRepository.save(admin);
+        Admin savedAdmin = adminRepository.save(admin);
+
+        return modelMapper.map(savedAdmin, AdminResponseDTO.class);
     }
 
     @Override
-    public List<AdminDTO> getAllAdmins() {
+    public List<AdminResponseDTO> getAllAdmins() {
         return adminRepository.findAll().stream()
-                .map(admin -> modelMapper.map(admin, AdminDTO.class))
+                .map(admin -> modelMapper.map(admin, AdminResponseDTO.class))
                 .collect(Collectors.toList());
     }
+
     @Override
-    public AdminDTO getAdminByEmail(String email) {
+    public AdminResponseDTO getAdminByEmail(String email) {
         Admin admin = adminRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
-        return modelMapper.map(admin, AdminDTO.class);
+        return modelMapper.map(admin, AdminResponseDTO.class);
     }
+
     @Override
-    public void updateAdminByEmail(String email, AdminDTO adminDTO) {
+    public AdminResponseDTO updateAdminByEmail(String email, AdminRequestDTO adminDTO) {
         Admin existingAdmin = adminRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
         existingAdmin.setUserName(adminDTO.getUserName());
+        existingAdmin.setEmployeeId(adminDTO.getEmployeeId());
 
         existingAdmin.setEmail(adminDTO.getEmail());
         User user = existingAdmin.getUser();
@@ -68,16 +72,16 @@ public class AdminServiceImpl implements AdminService {
             userRepository.save(user);
         }
 
-        adminRepository.save(existingAdmin);
+        Admin updatedAdmin = adminRepository.save(existingAdmin);
+        return modelMapper.map(updatedAdmin, AdminResponseDTO.class);
     }
+
     @Override
-    @Transactional
     public void deleteAdmin(Long id) {
         Admin admin = adminRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
         User user = admin.getUser();
-
         adminRepository.delete(admin);
 
         if (user != null) {
