@@ -1,8 +1,8 @@
 package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.dto.AuthResponseDTO;
-import org.example.model.dto.LoginRequestDTO;
+import org.example.model.dto.response.AuthResponseDTO;
+import org.example.model.dto.request.LoginRequestDTO;
 import org.example.model.entity.User;
 import org.example.repository.UserRepository;
 import org.example.util.JwtUtil;
