@@ -3,12 +3,16 @@ package org.example.service.impl;
 import org.example.model.dto.request.LookupDTO;
 import org.example.model.entity.Transmission;
 import org.example.repository.TransmissionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class TransmissionService implements org.example.service.TransmissionService {
 
+    @Autowired
     private TransmissionRepository transmissionRepository;
     @Override
     public List<LookupDTO> getAllTransmissions() {
