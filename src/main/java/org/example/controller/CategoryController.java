@@ -9,12 +9,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categories")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<LookupDTO> getAll() {
         return categoryService.getAllCategories();
     }
