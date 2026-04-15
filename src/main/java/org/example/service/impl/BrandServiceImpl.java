@@ -5,10 +5,12 @@ import org.example.model.entity.Brand;
 import org.example.repository.BrandRepository;
 import org.example.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class BrandServiceImpl implements BrandService {
 
     @Autowired
