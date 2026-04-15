@@ -25,6 +25,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/v1/categories/**").permitAll()
+                        .requestMatchers("/api/v1/brands/**").permitAll()
+                        .requestMatchers("/api/v1/fuel-types/**").permitAll()
+                        .requestMatchers("/api/v1/capacities/**").permitAll()
+                        .requestMatchers("/api/v1/transmissions/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/customers/register").permitAll()
                         .requestMatchers("/api/v1/admins/register").permitAll()
