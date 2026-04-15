@@ -5,10 +5,12 @@ import org.example.model.entity.SeatingCapacity;
 import org.example.repository.SeatingCapacityRepository;
 import org.example.service.SeatingCapacityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class SeatingCapacityServiceImpl implements SeatingCapacityService {
 
     @Autowired
