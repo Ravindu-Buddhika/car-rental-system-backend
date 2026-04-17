@@ -2,6 +2,7 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.model.dto.request.RentalRequestDTO;
+import org.example.model.dto.response.MyRentalResponseDTO;
 import org.example.model.dto.response.RentalResponseDTO;
 import org.example.model.entity.CarDetails;
 import org.example.model.entity.Customer;
@@ -69,7 +70,6 @@ public class RentalServiceImpl implements RentalService {
         rental.setActualReturnDate(today);
         rental.setRentalStatus("Completed");
 
-        // දඩ මුදල (Penalty) ගණනය - දිනකට 500 බැගින්
         long lateDays = ChronoUnit.DAYS.between(rental.getEndDate(), today);
         if (lateDays > 0) {
             double totalPenalty = lateDays * 500.0;
@@ -77,7 +77,6 @@ public class RentalServiceImpl implements RentalService {
             rental.setTotalAmount(rental.getTotalAmount() + totalPenalty);
         }
 
-        // වාහනය ආපහු Available කරනවා
         rental.getCar().setStatus("Available");
         carRepository.save(rental.getCar());
 
@@ -92,9 +91,9 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
-    public List<RentalResponseDTO> getRentalsByEmail(String email) {
+    public List<MyRentalResponseDTO> getRentalsByEmail(String email) {
         return rentalRepository.findByCustomer_User_Email(email).stream()
-                .map(this::mapToResponseDTO)
+                .map(this::mapToMyRentalResponseDTO) // මෙතන අලුත් mapping එක
                 .collect(Collectors.toList());
     }
 
@@ -111,5 +110,41 @@ public class RentalServiceImpl implements RentalService {
         resp.setTotalCost(rental.getTotalAmount());
         resp.setStatus(rental.getRentalStatus());
         return resp;
+    }
+    @Override
+    @Transactional
+    public RentalResponseDTO cancelRental(Long rentalId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new RuntimeException("Rental record not found!"));
+
+        if ("Completed".equalsIgnoreCase(rental.getRentalStatus())) {
+            throw new RuntimeException("Completed bookings cannot be cancelled.");
+        }
+
+        rental.setRentalStatus("Cancelled");
+
+        rental.getCar().setStatus("Available");
+        carRepository.save(rental.getCar());
+
+        return mapToResponseDTO(rentalRepository.save(rental));
+    }
+
+    private MyRentalResponseDTO mapToMyRentalResponseDTO(Rental rental) {
+        MyRentalResponseDTO dto = new MyRentalResponseDTO();
+        dto.setRentalId(rental.getRentalId());
+
+        // CarDetails එකෙන් විස්තර ගන්නවා
+        if (rental.getCar() != null) {
+            dto.setCarModel(rental.getCar().getCarModel());
+            dto.setPlateNumber(rental.getCar().getPlateNumber());
+            dto.setImageUrl(rental.getCar().getImageUrl()); // අලුතින් එකතු කළ image එක 📸
+        }
+
+        dto.setStartDate(rental.getStartDate());
+        dto.setEndDate(rental.getEndDate());
+        dto.setTotalCost(rental.getTotalAmount());
+        dto.setStatus(rental.getRentalStatus());
+
+        return dto;
     }
 }

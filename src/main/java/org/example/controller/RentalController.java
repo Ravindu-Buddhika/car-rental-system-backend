@@ -2,6 +2,7 @@ package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.model.dto.request.RentalRequestDTO;
+import org.example.model.dto.response.MyRentalResponseDTO;
 import org.example.model.dto.response.RentalResponseDTO;
 import org.example.service.RentalService;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/rentals")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 public class RentalController {
     private final RentalService rentalService;
 
@@ -33,8 +34,13 @@ public class RentalController {
     }
 
     @GetMapping("/my-rentals")
-    public ResponseEntity<List<RentalResponseDTO>> getMyRentals(Authentication authentication) {
+    public ResponseEntity<List<MyRentalResponseDTO>> getMyRentals(Authentication authentication) {
         String email = authentication.getName();
         return ResponseEntity.ok(rentalService.getRentalsByEmail(email));
+    }
+
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<RentalResponseDTO> cancelRental(@PathVariable Long id) {
+        return ResponseEntity.ok(rentalService.cancelRental(id));
     }
 }
