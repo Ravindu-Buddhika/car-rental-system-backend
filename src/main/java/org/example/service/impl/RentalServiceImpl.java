@@ -10,6 +10,7 @@ import org.example.model.entity.Rental;
 import org.example.repository.CarRepository;
 import org.example.repository.CustomerRepository;
 import org.example.repository.RentalRepository;
+import org.example.service.EmailService;
 import org.example.service.RentalService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,25 +23,26 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
+
     private final RentalRepository rentalRepository;
     private final CarRepository carRepository;
     private final CustomerRepository customerRepository;
+    private final EmailService emailService;
 
     @Override
     @Transactional
-    public RentalResponseDTO createRental(RentalRequestDTO dto) {
-        // 1. Car එක සහ Customer ව හොයාගන්නවා
+    public RentalResponseDTO createRental(RentalRequestDTO dto, String email) {
         CarDetails car = carRepository.findById(dto.getCarId())
                 .orElseThrow(() -> new RuntimeException("Car not found!"));
-        Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found!"));
 
-        // 2. වාහනය Available ද කියලා බලනවා
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Customer profile not found for email: " + email));
+
+        // 3. Availability Check
         if (!"Available".equalsIgnoreCase(car.getStatus())) {
-            throw new RuntimeException("මෙම වාහනය දැනට ලබාගත නොහැක.");
+            throw new RuntimeException("This vehicle is not available for now.");
         }
 
-        // 3. දින ගණන සහ මුළු මුදල ගණනය කරනවා
         long days = ChronoUnit.DAYS.between(dto.getStartDate(), dto.getEndDate());
         if (days <= 0) days = 1;
 
@@ -53,11 +55,18 @@ public class RentalServiceImpl implements RentalService {
         rental.setRentalStatus("Active");
         rental.setPenaltyFee(0.0);
 
-        // 4. වාහනයේ Status එක වෙනස් කරනවා
         car.setStatus("Rented");
         carRepository.save(car);
 
-        return mapToResponseDTO(rentalRepository.save(rental));
+        Rental savedRental = rentalRepository.save(rental);
+
+        try {
+            emailService.sendBookingConfirmation(savedRental);
+        } catch (Exception e) {
+            System.err.println("Email Error: " + e.getMessage());
+        }
+
+        return mapToResponseDTO(savedRental);
     }
 
     @Override
@@ -93,24 +102,10 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public List<MyRentalResponseDTO> getRentalsByEmail(String email) {
         return rentalRepository.findByCustomer_User_Email(email).stream()
-                .map(this::mapToMyRentalResponseDTO) // මෙතන අලුත් mapping එක
+                .map(this::mapToMyRentalResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    // Helper Method for Mapping
-    private RentalResponseDTO mapToResponseDTO(Rental rental) {
-        RentalResponseDTO resp = new RentalResponseDTO();
-        resp.setRentalId(rental.getRentalId());
-        resp.setCarModel(rental.getCar().getCarModel());
-        resp.setPlateNumber(rental.getCar().getPlateNumber());
-        resp.setCustomerName(rental.getCustomer().getFullName());
-        resp.setContactNumber(rental.getCustomer().getContactNumber());
-        resp.setStartDate(rental.getStartDate());
-        resp.setEndDate(rental.getEndDate());
-        resp.setTotalCost(rental.getTotalAmount());
-        resp.setStatus(rental.getRentalStatus());
-        return resp;
-    }
     @Override
     @Transactional
     public RentalResponseDTO cancelRental(Long rentalId) {
@@ -129,15 +124,30 @@ public class RentalServiceImpl implements RentalService {
         return mapToResponseDTO(rentalRepository.save(rental));
     }
 
+    // --- Mapper Methods ---
+
+    private RentalResponseDTO mapToResponseDTO(Rental rental) {
+        RentalResponseDTO resp = new RentalResponseDTO();
+        resp.setRentalId(rental.getRentalId());
+        resp.setCarModel(rental.getCar().getCarModel());
+        resp.setPlateNumber(rental.getCar().getPlateNumber());
+        resp.setCustomerName(rental.getCustomer().getFullName());
+        resp.setContactNumber(rental.getCustomer().getContactNumber());
+        resp.setStartDate(rental.getStartDate());
+        resp.setEndDate(rental.getEndDate());
+        resp.setTotalCost(rental.getTotalAmount());
+        resp.setStatus(rental.getRentalStatus());
+        return resp;
+    }
+
     private MyRentalResponseDTO mapToMyRentalResponseDTO(Rental rental) {
         MyRentalResponseDTO dto = new MyRentalResponseDTO();
         dto.setRentalId(rental.getRentalId());
 
-        // CarDetails එකෙන් විස්තර ගන්නවා
         if (rental.getCar() != null) {
             dto.setCarModel(rental.getCar().getCarModel());
             dto.setPlateNumber(rental.getCar().getPlateNumber());
-            dto.setImageUrl(rental.getCar().getImageUrl()); // අලුතින් එකතු කළ image එක 📸
+            dto.setImageUrl(rental.getCar().getImageUrl());
         }
 
         dto.setStartDate(rental.getStartDate());

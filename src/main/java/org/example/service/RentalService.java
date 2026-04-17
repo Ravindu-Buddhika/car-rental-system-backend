@@ -8,7 +8,7 @@ import org.example.model.entity.Rental;
 import java.util.List;
 
 public interface RentalService {
-    RentalResponseDTO createRental(RentalRequestDTO dto);
+    RentalResponseDTO createRental(RentalRequestDTO dto, String email);
     RentalResponseDTO completeRental(Long rentalId);
     List<RentalResponseDTO> getAllRentals();
     List<MyRentalResponseDTO> getRentalsByEmail(String email);

@@ -19,8 +19,9 @@ public class RentalController {
     private final RentalService rentalService;
 
     @PostMapping("/create")
-    public ResponseEntity<RentalResponseDTO> createRental(@RequestBody RentalRequestDTO dto) {
-        return ResponseEntity.ok(rentalService.createRental(dto));
+    public ResponseEntity<RentalResponseDTO> createRental(@RequestBody RentalRequestDTO dto,Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(rentalService.createRental(dto,email));
     }
 
     @PutMapping("/return/{id}")
