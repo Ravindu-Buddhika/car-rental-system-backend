@@ -16,4 +16,5 @@ public interface CarService {
                                          Long transmissionId, Long capacityId, String status);
 
     List<CarResponseDTO> searchByModel(String model);
+    void updateCarStatus(Long carId, String newStatus);
 }

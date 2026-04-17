@@ -8,12 +8,12 @@ import lombok.*;
 public class CarResponseDTO {
     private Long carId;
     private String carModel;
-    private String brandName;         // උදා: "Toyota"
+    private String brandName;
     private String plateNumber;
-    private String fuelTypeName;      // උදා: "Petrol"
-    private String transmissionType;  // උදා: "Auto"
-    private String categoryName;      // උදා: "Luxury"
-    private Integer seatingCapacity;  // උදා: 5
+    private String fuelTypeName;
+    private String transmissionType;
+    private String categoryName;
+    private Integer seatingCapacity;
     private Double dailyRate;
     private String status;
     private Integer year;

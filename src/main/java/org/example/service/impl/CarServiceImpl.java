@@ -100,4 +100,12 @@ public class CarServiceImpl implements CarService {
         if (car.getSeatingCapacity() != null) resp.setSeatingCapacity(car.getSeatingCapacity().getCapacity());
         return resp;
     }
+
+    public void updateCarStatus(Long carId, String newStatus) {
+        CarDetails car = carRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("Car not found with id: " + carId));
+
+        car.setStatus(newStatus);
+        carRepository.save(car);
+    }
 }
