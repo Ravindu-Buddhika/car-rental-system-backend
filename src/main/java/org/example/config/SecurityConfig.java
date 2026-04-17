@@ -26,7 +26,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. CORS Configuration එක මෙතනට එකතු කළා
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of("http://localhost:5173"));
@@ -49,8 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admins/register").permitAll()
                         .requestMatchers("/api/v1/cars/**").permitAll()
 
-                        // 2. Rental create එකට විතරක් තාවකාලිකව permitAll දුන්නා (CORS/Token check කරන්න)
-                        .requestMatchers("/api/v1/rentals/create").permitAll()
+                        .requestMatchers("/api/v1/rentals/create").authenticated()
 
                         .requestMatchers("/api/v1/customers/**").authenticated()
                         .requestMatchers("/api/v1/admins/**").authenticated()
