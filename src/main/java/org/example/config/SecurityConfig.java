@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.filter.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -23,8 +26,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // 1. CORS Configuration එක මෙතනට එකතු කළා
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of("http://localhost:5173"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/v1/categories/**").permitAll()
                         .requestMatchers("/api/v1/brands/**").permitAll()
@@ -35,6 +48,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/customers/register").permitAll()
                         .requestMatchers("/api/v1/admins/register").permitAll()
                         .requestMatchers("/api/v1/cars/**").permitAll()
+
+                        // 2. Rental create එකට විතරක් තාවකාලිකව permitAll දුන්නා (CORS/Token check කරන්න)
+                        .requestMatchers("/api/v1/rentals/create").permitAll()
+
                         .requestMatchers("/api/v1/customers/**").authenticated()
                         .requestMatchers("/api/v1/admins/**").authenticated()
                         .requestMatchers("/api/v1/rentals/**").authenticated()
