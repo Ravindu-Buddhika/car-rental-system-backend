@@ -28,6 +28,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public AdminResponseDTO registerAdmin(AdminRequestDTO adminDTO) {
+        // 1. මුලින්ම Security එක සඳහා User Account එක හදාගන්නවා
         User user = new User();
         user.setEmail(adminDTO.getEmail());
         user.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
@@ -35,7 +36,10 @@ public class AdminServiceImpl implements AdminService {
 
         User savedUser = userRepository.save(user);
 
-        Admin admin = modelMapper.map(adminDTO, Admin.class);
+        Admin admin = new Admin();
+        admin.setUserName(adminDTO.getUserName());
+        admin.setEmail(adminDTO.getEmail());
+        admin.setEmployeeId(adminDTO.getEmployeeId());
         admin.setUser(savedUser);
 
         Admin savedAdmin = adminRepository.save(admin);
