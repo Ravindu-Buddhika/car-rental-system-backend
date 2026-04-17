@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/customers")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -48,5 +48,11 @@ public class CustomerController {
     public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return ResponseEntity.ok("Customer deleted successfully!");
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<CustomerResponseDTO> getMyProfile(Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(customerService.getCustomerByEmail(email));
     }
 }

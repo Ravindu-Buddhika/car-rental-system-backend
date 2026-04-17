@@ -65,25 +65,31 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponseDTO updateCustomerByEmail(String email, CustomerRequestDTO dto) {
-        Customer existingCustomer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Customer not found with email: " + email));
+    @Transactional
+    public CustomerResponseDTO updateCustomerByEmail(String currentEmail, CustomerRequestDTO dto) {
+        Customer existingCustomer = customerRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new RuntimeException("Customer not found with email: " + currentEmail));
 
-        // Field updates
+        if (!currentEmail.equalsIgnoreCase(dto.getEmail())) {
+            if (customerRepository.existsByEmail(dto.getEmail())) {
+                throw new RuntimeException("Email address '" + dto.getEmail() + "' is already in use!");
+            }
+
+            existingCustomer.setEmail(dto.getEmail());
+            if (existingCustomer.getUser() != null) {
+                existingCustomer.getUser().setEmail(dto.getEmail());
+            }
+        }
+
         existingCustomer.setFullName(dto.getFullName());
         existingCustomer.setContactNumber(dto.getContactNumber());
         existingCustomer.setAddress(dto.getAddress());
         existingCustomer.setDrivingLicenseNumber(dto.getDrivingLicenseNumber());
         existingCustomer.setNic(dto.getNic());
-        existingCustomer.setEmail(dto.getEmail());
 
-        // User Table update
-        if (existingCustomer.getUser() != null) {
-            existingCustomer.getUser().setEmail(dto.getEmail());
-            userRepository.save(existingCustomer.getUser());
-        }
+        Customer updatedCustomer = customerRepository.save(existingCustomer);
 
-        return mapToResponseDTO(customerRepository.save(existingCustomer));
+        return mapToResponseDTO(updatedCustomer);
     }
 
     @Override
@@ -95,10 +101,16 @@ public class CustomerServiceImpl implements CustomerService {
         if (user != null) userRepository.delete(user);
     }
 
-    // ID එක පැටලෙන නිසා හදපු Helper Method එක
     private CustomerResponseDTO mapToResponseDTO(Customer customer) {
         CustomerResponseDTO resp = modelMapper.map(customer, CustomerResponseDTO.class);
-        resp.setId(customer.getCustomerId()); // Entity එකේ customerId එක DTO එකේ id එකට සෙට් කරනවා
+        resp.setId(customer.getCustomerId());
         return resp;
+    }
+
+    @Override
+    public CustomerResponseDTO getCustomerByEmail(String email) {
+        Customer customer = customerRepository.findByUserEmail(email)
+                .orElseThrow(() -> new RuntimeException("Customer not found with email: " + email));
+        return mapToResponseDTO(customer);
     }
 }
